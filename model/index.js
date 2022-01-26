@@ -1,68 +1,62 @@
-const fs = require('fs/promises');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const Joi = require('joi');
-
-const contactsPath = path.resolve('./model/contacts.json');
-
-const setContacts = async data =>
-  fs.writeFile(contactsPath, JSON.stringify(data));
+const Joi = require("joi");
+const Contact = require("./schema");
 
 const listContacts = async () => {
-  const contacts = JSON.parse(await fs.readFile(contactsPath, 'utf-8'));
-  return await contacts;
+  const contacts = await Contact.find();
+  console.log(contacts)
+  return contacts;
 };
 
-const getContactById = async contactId => {
-  const contacts = listContacts();
-  const contactByID = contacts.find(item => contactId === item.id);
-  return contactByID;
+const getContactById = async (contactId) => {
+  const data = await Contact.findById(contactId);
+  return data;
 };
 
-const removeContact = async contactId => {
-  console.log(`await contactId`, await contactId);
-  const contacts = await listContacts();
-  const newContacts = contacts.filter(item => item.id !== contactId);
-  setContacts(newContacts);
+const removeContact = async (contactId) => {
+  const data = await listContacts();
+  const postIndex = data.findIndex((item) => contactId === item.id);
+  if (postIndex === -1) return false;
+  console.log(Contact.deleteOne({ _id: contactId }));
+  return Contact.deleteOne({ _id: contactId });
 };
 
-const addContact = async body => {
+const addContact = async (body) => {
+  const { name, email, phone, favorite } = body;
   const schema = Joi.object({
     name: Joi.string().alphanum().min(3).max(30).required(),
     email: Joi.string().required(),
     phone: Joi.required(),
   });
-  const validationContacts = schema.validate(body);
-  if (validationContacts.error) return false;
-  console.log(validationContacts);
-  const contacts = await listContacts();
-  const newContact = { id: uuidv4(), ...body };
-  contacts.push(newContact);
-  setContacts(contacts);
-  return contacts;
+  const data = await new Contact({ name, email, phone, favorite });
+  console.log(data);
+  
+
+  const validationResult = schema.validate(body);
+  if (validationResult.error) return false;
+  await data.save();
+  return data;
 };
 
 const updateContact = async (contactId, body) => {
   const schema = Joi.object({
-    name: Joi.string().alphanum().min(3).max(30).required(),
+    name: Joi.string().min(3).max(30).required(),
     email: Joi.string().required(),
     phone: Joi.required(),
+    favorite: Joi.boolean(),
   });
-  const validationContacts = schema.validate(body);
-  if (validationContacts.error)
-    return validationContacts.error.details[0].message;
-  const contacts = await listContacts();
-  const contactIndex = contacts.findIndex(item => contactId === item.id);
-  if (contactIndex === -1) return false;
-  const newUpdateContact = {
-    ...contacts[contactIndex],
-    id: contacts[contactIndex].id,
-    ...body,
-  };
-  contacts.splice(contactIndex, 1, newUpdateContact);
-  setContacts(contacts);
-
-  return contacts;
+  const validationResult = schema.validate(body);
+  if (validationResult.error) return validationResult.error.details[0].message;
+  return await Contact.update({ _id: contactId }, body);
+};
+const updateStatusContact = async (contactId, body) => {
+  const data = await listContacts();
+  const postIndex = data.findIndex((item) => contactId === item.id);
+  if (postIndex === -1) return false;
+  const { favorite } = body;
+  const schema = Joi.boolean();
+  const validationResult = schema.validate(favorite);
+  if (validationResult.error) return validationResult.error.details[0].message;
+  return await Contact.updateOne({ _id: contactId }, { favorite: favorite });
 };
 
 module.exports = {
@@ -71,4 +65,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };
