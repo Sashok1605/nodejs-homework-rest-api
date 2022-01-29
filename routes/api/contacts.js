@@ -10,7 +10,7 @@ const {
   addContact,
   updateContact,
   updateStatusContact,
-} = require("../../model/index");
+} = require("../../model/Contacts/index");
 
 router.get("/", async (req, res, next) => {
   try {
