@@ -148,7 +148,7 @@ router.get('/current', auth, async (req, res, next) => {
 router.patch(
   '/avatars',
   auth,
-  multer.single('picture'),
+  multer.single('avatar'),
   async (req, res, next) => {
     const { description } = req.body;
     const { path: temporaryName, originalname } = req.file;
