@@ -4,7 +4,6 @@ const cors = require("cors");
 require("./db");
 
 const contactsRouter = require("./routes/api/contacts");
-
 const usersRouter = require("./routes/api/users");
 
 const app = express();
@@ -15,8 +14,7 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-
-require("./config/config-password");
+require("./config/config-passport");
 app.use("/api/contacts", contactsRouter);
 app.use("/api/users", usersRouter);
 app.use(express.static("public"));

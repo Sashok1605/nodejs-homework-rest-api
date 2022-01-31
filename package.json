@@ -12,25 +12,16 @@
     "bcryptjs": "^2.4.3",
     "cors": "2.8.5",
     "cross-env": "7.0.3",
-<<<<<<< HEAD
     "dotenv": "^15.0.0",
-=======
-    "dotenv": "^14.3.2",
->>>>>>> master
     "express": "4.17.1",
     "gravatar": "^1.8.2",
     "jimp": "^0.16.1",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
-<<<<<<< HEAD
     "mongoose": "^6.1.2",
     "morgan": "1.10.0",
     "multer": "^1.4.4",
     "nodemailer": "^6.7.2",
-=======
-    "mongoose": "^6.1.8",
-    "morgan": "1.10.0",
->>>>>>> master
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "uuid": "^8.3.2"

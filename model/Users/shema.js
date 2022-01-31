@@ -22,7 +22,7 @@ const users = new Shema({
     type: String,
     default: null,
   },
-  avatarURL: {
+avatarURL: {
     type: String,
   },
   verify: {
