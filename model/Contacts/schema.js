@@ -1,6 +1,5 @@
 const mongoose = require('../../db')
 
-
 const Shema = mongoose.Schema;
 
 const contacts = new Shema({
