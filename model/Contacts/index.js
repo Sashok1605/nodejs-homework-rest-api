@@ -2,13 +2,9 @@ const Joi = require("joi");
 const Contact = require("./schema");
 
 const listContacts = async () => {
-  try {
-    const contacts = await Contact.find();
-    console.log(contacts);
-    return contacts;
-  } catch (err) {
-    console.log(err);
-  }
+  const contacts = await Contact.find();
+  console.log(contacts)
+  return contacts;
 };
 
 const getContactById = async (contactId) => {
@@ -17,12 +13,11 @@ const getContactById = async (contactId) => {
 };
 
 const removeContact = async (contactId) => {
-  try {
-    const result = await Contact.findByIdAndDelete(contactId);
-    return result;
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  const data = await listContacts();
+  const postIndex = data.findIndex((item) => contactId === item.id);
+  if (postIndex === -1) return false;
+  console.log(Contact.deleteOne({ _id: contactId }));
+  return Contact.deleteOne({ _id: contactId });
 };
 
 const addContact = async (body) => {
@@ -33,6 +28,9 @@ const addContact = async (body) => {
     phone: Joi.required(),
   });
   const data = await new Contact({ name, email, phone, favorite });
+  console.log(data);
+  
+
   const validationResult = schema.validate(body);
   if (validationResult.error) return false;
   await data.save();
@@ -50,7 +48,6 @@ const updateContact = async (contactId, body) => {
   if (validationResult.error) return validationResult.error.details[0].message;
   return await Contact.update({ _id: contactId }, body);
 };
-
 const updateStatusContact = async (contactId, body) => {
   const data = await listContacts();
   const postIndex = data.findIndex((item) => contactId === item.id);
