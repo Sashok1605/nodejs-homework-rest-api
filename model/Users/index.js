@@ -11,21 +11,18 @@ const getUserById = async (userId) => {
   return data;
 };
 
-<<<<<<< HEAD
-const addUser = async (body) => {
-=======
-const addUser = async (body, avatarURL) => {
->>>>>>> master
+const addUser = async (body, avatarURL, token) => {
   const { password, email } = body;
   const schema = Joi.object({
     password: Joi.string().alphanum().min(3).max(30).required(),
     email: Joi.string().required(),
   });
-<<<<<<< HEAD
-  const data = await new User({ password, email });
-=======
-  const data = await new User({ password, email, avatarURL });
->>>>>>> master
+  const data = await new User({
+    password,
+    email,
+    avatarURL,
+    verificationToken: token,
+  });
   data.setPassword(password);
   const validationResult = schema.validate(body);
   if (validationResult.error) return false;
@@ -60,6 +57,24 @@ const removeUser = async (userId) => {
   }
 };
 
+const veryfyByToken = async (token, next) => {
+  try {
+    return User.findOneAndUpdate(
+      { verificationToken: token },
+      { verify: true, verificationToken: null }
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateTokenByEmail = async (email, token, next) => {
+  try {
+    return User.findOneAndUpdate({ email }, { verificationToken: token });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   listUsers,
   getUserById,
@@ -68,4 +83,6 @@ module.exports = {
   removeUser,
   getUserByEmail,
   updateTokenById,
+  veryfyByToken,
+  updateTokenByEmail,
 };

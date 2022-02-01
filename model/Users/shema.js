@@ -22,12 +22,17 @@ const users = new Shema({
     type: String,
     default: null,
   },
-<<<<<<< HEAD
-=======
-  avatarURL: {
+avatarURL: {
     type: String,
   },
->>>>>>> master
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
 });
 
 users.methods.setPassword = function (password) {
